@@ -7,7 +7,8 @@ SERVER_URL = 'http://kitbox{num}.kit-invest.ru/KitBoxService.svc/SendRequest'
 TIME_POLL_SEC = 90
 
 TG_TOKEN = '5154060556:AAFCeRYqle6fbNsh7Qa3EAPswK9i56NpVEc'
-TG_CHAT_IDS = ['376585847', '753407442']
+TG_CHAT_IDS = ['376585847', '753407442', '281605899']
+# TG_CHAT_IDS = ['376585847']
 
 EMOJI_OK = '\U0001f7E2'
 EMOJI_FAIL = '\U0001f534'
@@ -35,22 +36,24 @@ def check_server_ok() -> dict:
 
 
 def main():
+    is_first_iter = True
     server_status_ok = False
 
     while True:
         result = check_server_ok()
-        if server_status_ok and result['result'] is False:
+        if (server_status_ok or is_first_iter) and result['result'] is False:
             if result['status'] is None:
                 msg = f"{EMOJI_FAIL} Server is down. Server error {result['error']}"
             else:
-                msg = f"{EMOJI_FAIL} Server is down. Status code {result['status_code']}"
+                msg = f"{EMOJI_FAIL} Server is down. Status code {result['status']}"
             send_tg_msg(msg=msg)
             server_status_ok = False
-        elif (not server_status_ok) and result['result'] is True:
+        elif (not server_status_ok or is_first_iter) and result['result'] is True:
             msg = f'{EMOJI_OK} Server is OK. Awesome!'
             send_tg_msg(msg=msg)
             server_status_ok = True
 
+        is_first_iter = False
         time.sleep(TIME_POLL_SEC)
 
 
