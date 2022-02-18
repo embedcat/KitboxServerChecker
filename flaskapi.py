@@ -3,7 +3,10 @@ from flask import Flask
 api = Flask(__name__)
 
 
-@api.route('/api', methods=['GET', 'POST'])
+@api.route('/api1', methods=['GET', 'POST'])
+@api.route('/api2', methods=['GET', 'POST'])
+@api.route('/api3', methods=['GET', 'POST'])
+@api.route('/api4', methods=['GET', 'POST'])
 def endpoint():
     return {}
 
