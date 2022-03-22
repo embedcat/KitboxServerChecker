@@ -62,7 +62,7 @@ def bot_help(message):
 
 
 @bot.message_handler(commands=["check"])
-def bot_help(message):
+def bot_check(message):
     result = check_server_ok()
     msg = result_get_message(result=result)
     bot.send_message(chat_id=message.chat.id, text=msg)
@@ -71,7 +71,7 @@ def bot_help(message):
 def send_update_status(msg: str = "") -> None:
     for username, chat_id in users.items():
         bot.send_message(chat_id=chat_id, text=msg)
-        time.sleep(0.2)
+        time.sleep(2)
 
 
 def check_server_ok() -> dict:
@@ -120,5 +120,10 @@ if __name__ == "__main__":
 
     t1 = threading.Thread(target=server_check_thread)
     t1.start()
-    bot.infinity_polling()
+    try:
+        bot.infinity_polling()
+    except Exception as e:
+        print(e)
+        time.sleep(5)
+
 
