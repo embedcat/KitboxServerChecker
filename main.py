@@ -97,20 +97,18 @@ def result_get_message(result: dict) -> str:
 
 
 def server_check_thread():
-    is_first_iter = True
-    server_status_ok = False
+    server_status_ok = check_server_ok()["result"]
 
     while True:
         result = check_server_ok()
         msg = result_get_message(result=result)
-        if (server_status_ok or is_first_iter) and result["result"] is False:
+        if server_status_ok and result["result"] is False:
             send_update_status(msg=msg)
             server_status_ok = False
-        elif (not server_status_ok or is_first_iter) and result["result"] is True:
+        elif not server_status_ok and result["result"] is True:
             send_update_status(msg=msg)
             server_status_ok = True
 
-        is_first_iter = False
         time.sleep(TIME_POLL_SEC)
 
 
@@ -118,12 +116,5 @@ if __name__ == "__main__":
     with open(USERS_FILE, "r") as file:
         users = json.load(file)
 
-    t1 = threading.Thread(target=server_check_thread)
-    t1.start()
-    try:
-        bot.infinity_polling()
-    except Exception as e:
-        print(e)
-        time.sleep(5)
-
-
+    threading.Thread(target=lambda: bot.infinity_polling()).start()
+    threading.Thread(target=lambda: server_check_thread()).start()

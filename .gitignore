@@ -2,3 +2,5 @@
 /.idea/
 .env
 users.json
+__pycache__
+.vscode
