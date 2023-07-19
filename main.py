@@ -70,7 +70,11 @@ def bot_check(message):
 
 def send_update_status(msg: str = "") -> None:
     for username, chat_id in users.items():
-        bot.send_message(chat_id=chat_id, text=msg)
+        try:
+            print(username, chat_id)
+            bot.send_message(chat_id=chat_id, text=msg)
+        except Exception as e:
+            print(e)
         time.sleep(2)
 
 
@@ -100,15 +104,17 @@ def server_check_thread():
     server_status_ok = check_server_ok()["result"]
 
     while True:
-        result = check_server_ok()
-        msg = result_get_message(result=result)
-        if server_status_ok and result["result"] is False:
-            send_update_status(msg=msg)
-            server_status_ok = False
-        elif not server_status_ok and result["result"] is True:
-            send_update_status(msg=msg)
-            server_status_ok = True
-
+        try:
+            result = check_server_ok()
+            msg = result_get_message(result=result)
+            if server_status_ok and result["result"] is False:
+                send_update_status(msg=msg)
+                server_status_ok = False
+            elif not server_status_ok and result["result"] is True:
+                send_update_status(msg=msg)
+                server_status_ok = True
+        except Exception as e:
+            print(e)
         time.sleep(TIME_POLL_SEC)
 
 
